@@ -1,0 +1,10 @@
+{
+  "Name": "Time Freezes at Midnight",
+  "Author": "JBtheShadow",
+  "Version": "1.1.1",
+  "Description": "Time stops advancing at 12:00 AM (by default)",
+  "UniqueID": "JBtheShadow.TimeFreezesAtMidnight",
+  "EntryDll": "TimeFreezesAtMidnight.dll",
+  "MinimumApiVersion": "3.0.0",
+  "UpdateKeys": [ "Nexus:7425" ]
+}
