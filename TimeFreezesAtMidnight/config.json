@@ -1,4 +1,5 @@
 {
-  "enabled": true,
-  "timeFreezesAt": 2400
+  "Enabled": true,
+  "TimeFreezesAt": 2400,
+  "UseOldMethod": false
 }

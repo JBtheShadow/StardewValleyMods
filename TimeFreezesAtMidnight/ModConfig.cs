@@ -10,28 +10,13 @@ namespace TimeFreezesAtMidnight
     {
         public bool Enabled { get; set; } = true;
 
-        public const int DefaultValueTimeFreezesAt = 2400;
-
-        public const int MinTimeFreezesAt = 0700;
-
-        public const int MaxTimeFreezesAt = 2540;
-
-        private int _timeFreezesAt = DefaultValueTimeFreezesAt;
+        private int _timeFreezesAt = TimeHelper.DefaultValueTimeFreezesAt;
         public int TimeFreezesAt
         {
             get => _timeFreezesAt;
-            set
-            {
-                var val = value;
-
-                if (val < MinTimeFreezesAt)
-                    val = MinTimeFreezesAt;
-
-                if (val > MaxTimeFreezesAt)
-                    val = MaxTimeFreezesAt;
-
-                _timeFreezesAt = val - (val % 10);
-            }
+            set => _timeFreezesAt = TimeHelper.ClampTime(value);
         }
+
+        public bool UseOldMethod { get; set; } = false;
     }
 }

@@ -16,6 +16,28 @@ namespace TimeFreezesAtMidnight
             config = Helper.ReadConfig<ModConfig>();
             helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
             helper.Events.GameLoop.TimeChanged += GameLoop_TimeChanged;
+            helper.Events.GameLoop.UpdateTicked += GameLoop_UpdateTicked;
+        }
+
+        private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            if (!Context.IsWorldReady || !Context.IsMainPlayer || !config.Enabled || config.UseOldMethod)
+                return;
+
+            if (Game1.timeOfDay > config.TimeFreezesAt)
+                Game1.timeOfDay = config.TimeFreezesAt;
+
+            if (Game1.timeOfDay == config.TimeFreezesAt)
+                Game1.gameTimeInterval = 0;
+        }
+
+        private void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e)
+        {
+            if (!Context.IsWorldReady || !Context.IsMainPlayer || !config.Enabled || !config.UseOldMethod)
+                return;
+
+            if (e.NewTime > config.TimeFreezesAt)
+                Game1.timeOfDay = config.TimeFreezesAt;
         }
 
         private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
@@ -37,25 +59,18 @@ namespace TimeFreezesAtMidnight
             api.RegisterSimpleOption(ModManifest, "Enabled", "Enables or disables the mod",
                 () => config.Enabled,
                 val => config.Enabled = val);
-            api.RegisterClampedOption(ModManifest, "Time freezes at", "Indicates at what point should the game prevent time from advancing",
-                () => config.TimeFreezesAt,
-                val => config.TimeFreezesAt = val,
-                ModConfig.MinTimeFreezesAt,
-                ModConfig.MaxTimeFreezesAt);
-            api.RegisterLabel(ModManifest, "", "");
-            api.RegisterLabel(ModManifest, "", "");
-            api.RegisterLabel(ModManifest, "PS: The game stores time as an integer between 0700", "");
-            api.RegisterLabel(ModManifest, "and 2600, where numbers 1300 to 2400 correspond to", "");
-            api.RegisterLabel(ModManifest, "1PM to 12AM, 1AM is treated as 2500, and 2AM, 2600.", "");
-        }
+            api.RegisterSimpleOption(ModManifest, "Time freezes at", "Indicates at what point should the game prevent time from advancing",
+                () => TimeHelper.GameTimeToHumanReadableTime(config.TimeFreezesAt),
+                val => config.TimeFreezesAt = TimeHelper.HumanReadableTimeToGameTime(val));
+            api.RegisterSimpleOption(ModManifest, "Use old method", "Doesn't actually freeze time but reverts it back whenever time goes over the value above",
+                () => config.UseOldMethod,
+                val => config.UseOldMethod = val);
 
-        private void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e)
-        {
-            if (!config.Enabled)
-                return;
-
-            if (e.NewTime > config.TimeFreezesAt)
-                Game1.timeOfDay = config.TimeFreezesAt;
+            //api.RegisterLabel(ModManifest, "", "");
+            //api.RegisterLabel(ModManifest, "", "");
+            //api.RegisterLabel(ModManifest, "PS: The game stores time as an integer between 0600", "");
+            //api.RegisterLabel(ModManifest, "and 2600, where numbers 1300 to 2400 correspond to", "");
+            //api.RegisterLabel(ModManifest, "1PM to 12AM, 1AM is treated as 2500, and 2AM, 2600.", "");
         }
     }
 }

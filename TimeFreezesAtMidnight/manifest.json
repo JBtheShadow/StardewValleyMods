@@ -1,7 +1,7 @@
 {
   "Name": "Time Freezes at Midnight",
   "Author": "JBtheShadow",
-  "Version": "1.1.1",
+  "Version": "1.2.0",
   "Description": "Time stops advancing at 12:00 AM (by default)",
   "UniqueID": "JBtheShadow.TimeFreezesAtMidnight",
   "EntryDll": "TimeFreezesAtMidnight.dll",
