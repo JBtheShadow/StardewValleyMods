@@ -1,9 +1,9 @@
 ﻿using TimeFreezesAtMidnight.Helpers;
 
 namespace TimeFreezesAtMidnight.Settings;
-internal sealed class ModConfig
+public sealed class ModConfig
 {
-    internal bool Enabled { get; set; } = true;
+    public bool Enabled { get; set; } = true;
 
     private int _timeFreezesAt = TimeHelper.DefaultValueTimeFreezesAt;
     public int TimeFreezesAt
