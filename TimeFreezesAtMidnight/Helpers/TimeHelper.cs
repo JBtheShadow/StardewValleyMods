@@ -1,27 +1,27 @@
 ﻿using System.Globalization;
 
 namespace TimeFreezesAtMidnight.Helpers;
-internal sealed class TimeHelper
+internal static class TimeHelper
 {
     internal const int DefaultValueTimeFreezesAt = 2400;
 
-    internal const int StartOfDay = 0600;
+    private const int StartOfDay = 0600;
 
-    internal const int EndOfDay = 2600;
+    private const int EndOfDay = 2600;
 
-    internal const int TimeFreezeInterval = 30;
+    private static readonly CultureInfo EnUs = CultureInfo.CreateSpecificCulture("en-US");
 
-    private static readonly CultureInfo _enUS = CultureInfo.CreateSpecificCulture("en-US");
-
-    private static readonly DateTime _dummyToday = DateTime.Today;
+    private static readonly DateTime DummyToday = DateTime.Today;
 
     internal static int ClampTime(int value)
     {
-        if (value < StartOfDay)
-            return StartOfDay;
-
-        if (value > EndOfDay)
-            return EndOfDay;
+        switch (value)
+        {
+            case < StartOfDay:
+                return StartOfDay;
+            case > EndOfDay:
+                return EndOfDay;
+        }
 
         var rem100 = value % 100 - 50;
         if (rem100 > 0)
@@ -36,28 +36,26 @@ internal sealed class TimeHelper
 
     internal static int HumanReadableTimeToGameTime(string hTime)
     {
-        if (DateTime.TryParse(hTime, out DateTime date))
-        {
-            var value = date.Hour * 100 + date.Minute;
-            if (value < StartOfDay)
-                value += 2400; // Far as the game's concerned, past midnight but before crashing is STILL on the same day
+        if (!DateTime.TryParse(hTime, out var date))
+            return DefaultValueTimeFreezesAt;
+        
+        var value = date.Hour * 100 + date.Minute;
+        if (value < StartOfDay)
+            value += 2400; // Far as the game's concerned, past midnight but before crashing is STILL on the same day
 
-            return value;
-        }
-
-        return DefaultValueTimeFreezesAt;
+        return value;
     }
 
-    internal static string DateTimeToHumanReadableTime(DateTime dTime) =>
-        dTime.ToString("h:mm tt", _enUS);
+    private static string DateTimeToHumanReadableTime(DateTime dTime) =>
+        dTime.ToString("h:mm tt", EnUs);
 
     internal static string GameTimeToHumanReadableTime(int gTime) =>
         DateTimeToHumanReadableTime(GameTimeToDate(gTime));
 
-    internal static DateTime GameTimeToDate(int gTime)
+    private static DateTime GameTimeToDate(int gTime)
     {
         var hours = gTime / 100;
         var minutes = gTime % 100;
-        return _dummyToday.AddHours(hours).AddMinutes(minutes);
+        return DummyToday.AddHours(hours).AddMinutes(minutes);
     }
 }

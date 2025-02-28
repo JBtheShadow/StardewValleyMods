@@ -12,5 +12,5 @@ public sealed class ModConfig
         set => _timeFreezesAt = TimeHelper.ClampTime(value);
     }
 
-    public bool UseOldMethod { get; set; } = false;
+    public bool UseOldMethod { get; set; }
 }

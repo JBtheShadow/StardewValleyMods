@@ -8,11 +8,11 @@ using TimeFreezesAtMidnight.Settings;
 namespace TimeFreezesAtMidnight;
 internal sealed class ModEntry : Mod
 {
-    private ModConfig config = new();
+    private ModConfig _config = new();
 
     public override void Entry(IModHelper helper)
     {
-        config = Helper.ReadConfig<ModConfig>();
+        _config = Helper.ReadConfig<ModConfig>();
         helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
         helper.Events.GameLoop.TimeChanged += GameLoop_TimeChanged;
         helper.Events.GameLoop.UpdateTicked += GameLoop_UpdateTicked;
@@ -20,33 +20,33 @@ internal sealed class ModEntry : Mod
 
     private void GameLoop_UpdateTicked(object? sender, UpdateTickedEventArgs e)
     {
-        if (!Context.IsWorldReady || !Context.IsMainPlayer || !config.Enabled || config.UseOldMethod)
+        if (!Context.IsWorldReady || !Context.IsMainPlayer || !_config.Enabled || _config.UseOldMethod)
             return;
 
-        if (Game1.timeOfDay > config.TimeFreezesAt)
-            Game1.timeOfDay = config.TimeFreezesAt;
+        if (Game1.timeOfDay > _config.TimeFreezesAt)
+            Game1.timeOfDay = _config.TimeFreezesAt;
 
-        if (Game1.timeOfDay == config.TimeFreezesAt)
+        if (Game1.timeOfDay == _config.TimeFreezesAt)
             Game1.gameTimeInterval = 0;
     }
 
     private void GameLoop_TimeChanged(object? sender, TimeChangedEventArgs e)
     {
-        if (!Context.IsWorldReady || !Context.IsMainPlayer || !config.Enabled || config.UseOldMethod)
+        if (!Context.IsWorldReady || !Context.IsMainPlayer || !_config.Enabled || _config.UseOldMethod)
             return;
 
-        if (e.NewTime > config.TimeFreezesAt)
-            Game1.timeOfDay = config.TimeFreezesAt;
+        if (e.NewTime > _config.TimeFreezesAt)
+            Game1.timeOfDay = _config.TimeFreezesAt;
     }
 
     private void GameLoop_GameLaunched(object? sender, GameLaunchedEventArgs e)
     {
-        RegisterControlsGenericModConfigMenu(config);
+        RegisterControlsGenericModConfigMenu(_config);
     }
 
     private void RegisterControlsGenericModConfigMenu(ModConfig config)
     {
-        var api = Helper.ModRegistry.GetApi<IGenericModConfigMenuAPI>("spacechase0.GenericModConfigMenu");
+        var api = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
         if (api is null)
         {
             Monitor.Log("Generic Mod Config Menu not installed. Skipping integration.", LogLevel.Info);
